@@ -1,7 +1,7 @@
 # chess-engine
 
-1. Drawing the board and loading chess pieces
-2. Moving the pieces
+1. Drawing the board and loading chess pieces - Checked
+2. Moving the pieces - Checked
 3. Undo Moves
 4. Pawn Moves
 5. Generating possible moves

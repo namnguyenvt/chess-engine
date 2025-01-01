@@ -19,3 +19,80 @@ class GameState():
         ]
         self.whiteMoving = True
         self.transferedLog = []
+
+    # Takes a Move as a parameter
+    def makingMove(self, move):
+        self.board[move.startRow][move.startCol] = "--"
+        self.board[move.endRow][move.endCol] = move.piecesMoved
+        self.transferedLog.append(move) # Log the move so we can undo it later
+        self.whiteMoving = not self.whiteMoving # Swap player 
+
+    # Undo the last move 
+    def undoMove(self):
+        if len(self.transferedLog) != 0: # Make sure that there is a move to undo
+            move = self.transferedLog.pop()
+            self.board[move.startRow][move.startCol] = move.piecesMoved
+            self.board[move.endRow][move.endCol] = move.piecesCaptured
+            self.whiteMoving = not self.whiteMoving # Switch turn back
+
+    # All moves considering checks
+    def getValidMoves(self):
+        return self.getAllPossibleMoves()  # Not worry about checking 
+
+    # All moves without considering checks
+    def getAllPossibleMoves(self):
+        moves = []
+        for row in range(len(self.board)): # number of rows
+            for col in range(len(self.board[row])): # number of cols in given rows
+                turn = self.board[row][col][0]
+                if (turn == "w" and self.whiteMoving) and (turn == "b" and not self.whiteMoving):
+                    piece = self.board[row][col][1]
+                    if piece == "p":
+                        self.getPawnMoves(row, col, moves)
+                    elif piece == "R":
+                        self.getRookMoves(row, col, moves)
+        return moves
+
+    "Get all the possilbe pawn moves locate at row and col, also save it to the list"
+    def getPawnMoves(self, row, col, moves):
+        pass
+
+    "Get all the possilbe rook moves locate at row and col, also save it to the list"
+    def getRookMoves(self, row, col, moves):
+        pass
+
+class Move():
+    # Map keys to values
+    # Key: value
+
+    ranksToRows = {"1": 7, "2": 6, "3": 5, "4": 4, "5": 3, "6": 2, "7": 1, "8": 0}
+    rowsToRanks = {v: k for k, v in ranksToRows.items()}
+    filesToCols = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7}
+    colsToFiles = {v: k for k, v in filesToCols.items()}
+
+
+    # Initialize all move, from start to end location row and column, and also create a 2d list contain location of piece start move and end move
+    def __init__(self, startSQ, endSQ, board):
+        self.startRow = startSQ[0]
+        self.startCol = startSQ[1]
+        self.endRow = endSQ[0]
+        self.endCol = endSQ[1]
+        self.piecesMoved = board[self.startRow][self.startCol]
+        self.piecesCaptured = board[self.endRow][self.endCol]
+        self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
+        print(self.moveID)
+
+    """
+    Overriding the equals method
+    """
+    def __eq__(self, other):
+        if isinstance(other, Move):
+            return self.moveID == other.moveID
+        return False
+
+    def getChessNotation(self):
+        # Adding to make this like real life chess notation 
+        return self.getRankFile(self.startRow, self.startCol) + self.getRankFile(self.endRow, self.endCol)
+
+    def getRankFile(self, row, col):
+        return self.colsToFiles[col] + self.rowsToRanks[row]
