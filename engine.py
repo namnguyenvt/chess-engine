@@ -55,7 +55,11 @@ class GameState():
 
     "Get all the possilbe pawn moves locate at row and col, also save it to the list"
     def getPawnMoves(self, row, col, moves):
-        pass
+        if self.whiteMoving: # white pawns move
+            if self.board[row - 1][col] == "--": # 1 square pawn advance
+                moves.append(Move((row, col), (row - 1, col), self.board))
+                if row == 6 and self.board[row - 2][col] == "--": # 2 square pawn advance
+                    
 
     "Get all the possilbe rook moves locate at row and col, also save it to the list"
     def getRookMoves(self, row, col, moves):
